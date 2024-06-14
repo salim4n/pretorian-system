@@ -5,8 +5,9 @@ import Link from "next/link"
 import { Input } from "./components/ui/input"
 import { Label } from "./components/ui/label"
 import { LoginButton } from "./components/auth/LoginButton"
+import { Button } from "./components/ui/button"
 
-export default  function Home() {
+export default function Home() {
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
@@ -40,7 +41,11 @@ export default  function Home() {
               </div>
               <Input id="password" type="password" required />
             </div>
-            <LoginButton />
+            <Button type="submit" className="w-full">
+                Connexion
+            </Button>
+
+  
           </div>
           <div className="mt-4 text-center text-sm">
             <span>Vous n'avez pas de compte ?</span>
