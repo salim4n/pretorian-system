@@ -1,15 +1,18 @@
 "use client"
-
 import Image from "next/image"
 import Link from "next/link"
 import { Input } from "./components/ui/input"
 import { Label } from "./components/ui/label"
-import { LoginButton } from "./components/auth/LoginButton"
 import { Button } from "./components/ui/button"
+import { LoginButton } from "./components/auth/LoginButton"
+import {  useSession } from "next-auth/react"
 
-export default function Home() {
 
-  return (
+export default  function Home() {
+  const session = useSession()
+  const user = session.data?.user
+
+  return !user ?  (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
@@ -44,7 +47,7 @@ export default function Home() {
             <Button type="submit" className="w-full">
                 Connexion
             </Button>
-
+            <LoginButton />
   
           </div>
           <div className="mt-4 text-center text-sm">
@@ -65,5 +68,12 @@ export default function Home() {
         />
       </div>
     </div>
+  ) : (
+    <div className="text-center">
+      <Link href="/board">
+        <span>Dashboard</span>
+      </Link>
+    </div>
   )
+
 }

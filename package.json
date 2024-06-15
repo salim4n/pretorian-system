@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.9.1",
+    "@prisma/adapter-neon": "^5.12.1",
     "@auth/prisma-adapter": "^2.2.0",
     "@azure/storage-blob": "^12.18.0",
     "@hookform/resolvers": "^3.6.0",
@@ -26,7 +28,7 @@
     "dotenv": "^16.4.5",
     "lucide-react": "^0.394.0",
     "next": "14.2.4",
-    "next-auth": "^4.24.7",
+    "next-auth": "^5.0.0-beta.16",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
@@ -47,6 +49,9 @@
     "postcss": "^8",
     "prisma": "^5.15.0",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.1",
+    "eslint-config-prettier": "^9.1.0"
   }
 }

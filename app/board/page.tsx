@@ -1,6 +1,5 @@
 "use client"
 
-import { useSession,signOut, SessionProvider } from "next-auth/react"
 import '@tensorflow/tfjs-backend-cpu'
 import '@tensorflow/tfjs-backend-webgl'
 import { useRef, useEffect, useState } from 'react'
@@ -11,19 +10,24 @@ import {
 import * as tf from '@tensorflow/tfjs'
 import Webcam from 'react-webcam'
 import { Detected, sendPicture } from '@/lib/send-detection/action'
-import { useRouter } from "next/router"
-import { Menubar } from "@/components/ui/menubar"
+import { Menubar } from "@radix-ui/react-menubar"
+import { useSession } from "next-auth/react"
 
-export default function Home() {
-  const { data: session } = useSession()
-  const router = useRouter()
+export default function Board() {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>()
   const webcamRef = useRef<Webcam>(null)
   let detectInterval: NodeJS.Timer
+  const { data: session, status } = useSession()
 
-  if(!session){
-    router.push('/')
-}
+  if(status === 'loading'){
+    return <div>Loading...</div>
+  }
+
+  if(status === 'unauthenticated'){
+    return <div>Access denied</div>
+  }
+
+  
 
   async function runCocoSsd(){
     const net = await cocoSSDLoad()
@@ -68,7 +72,6 @@ export default function Home() {
   }, [])
 
   return (
-    <SessionProvider session={session}>
     <div>
       <Menubar />
       {cameras && cameras.map((camera, index) => (
@@ -85,6 +88,5 @@ export default function Home() {
         />
       ))}
     </div>
-    </SessionProvider>
   )
 }
