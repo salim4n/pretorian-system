@@ -72,8 +72,9 @@ export default function Board() {
   }, [])
 
   return (
-    <div>
-      <Menubar />
+
+      <>
+      <Menubar /><div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
       {cameras && cameras.map((camera, index) => (
         <Webcam
           audio={false}
@@ -84,9 +85,10 @@ export default function Board() {
           key={index}
           width={640}
           height={480}
-          className='m-1 rounded-md border-yellow-500 border-2'
-        />
+          className='m-1 rounded-md border-yellow-500 border-2' />
+
       ))}
     </div>
+    </>
   )
 }
