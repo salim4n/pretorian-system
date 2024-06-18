@@ -22,7 +22,7 @@ jobs:
           node-version: 20
           cache: "npm"
 
-      - name: npm install and build
+      - name: npm install and npm run build
         run: |
           npm install --force
           npm build
