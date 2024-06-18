@@ -22,10 +22,10 @@ jobs:
           node-version: 20
           cache: "yarn"
 
-      - name: yarn install and build
+      - name: npm install and build
         run: |
-          yarn install --frozen-lockfile
-          yarn build
+          npm install --force
+          npm build
 
       - name: Copy static files
         run: |
