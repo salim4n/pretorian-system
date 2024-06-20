@@ -13,7 +13,7 @@ export default function Home() {
             </h1>
 
             <p className="mt-4 sm:text-xl/relaxed">
-              Notre système Pretorian utilise l'intelligence artificielle pour <strong>detecter les intrusions dans votre domicile ou votre entreprise
+              Notre système Pretorian utilise l'intelligence artificielle pour<strong> detecter les intrusions dans votre domicile ou votre entreprise
               offrant une protection sans précédent contre les intrusions</strong>.
               Commencez dès aujourd'hui et donnez à votre domicile ou à votre entreprise la protection qu'ils méritent.
             </p>
@@ -39,9 +39,8 @@ export default function Home() {
             </h1>
 
             <p className="mt-4 sm:text-xl/relaxed">
-              Notre système Pretorian est une application web boosté par Vision par Ordinateur. 
-              <strong>Vous avez juste à vous connecter sur notre application web depuis un ordinateur avec une connection internet, branchez des caméra usb sur votre ordinateur,
-                ou connectez des camera wifi ou bluetooth, et nous nous occupons du reste.</strong>
+              Notre système Pretorian est une application web boosté par Vision par Ordinateur.
+              <strong> Nous avons designé une application plug and play. Vous vous connectez et vous avez une fenêtre sur vos locaux.</strong>
             </p>
           </div>
         </div>
@@ -67,6 +66,7 @@ export default function Home() {
                     features={["detection d'intrusion", "notifications en temps réel", "images enregistrées"]}
                     description="Parfait pour les appartements, maisons ou commerces"
                     url="https://buy.stripe.com/test_7sIcNf9yafRj6Zy8ww"
+                    buttonText="S'abonner"
                  />
                 <PriceCard
                     title="Mensuel avec engagement 1 an"
@@ -74,13 +74,15 @@ export default function Home() {
                     features={["detection d'intrusion", "notifications en temps réel", "images enregistrées"]}
                     description="Parfait pour les appartements, maisons ou commerces"
                     url="https://buy.stripe.com/test_7sIcNf9yafRj6Zy8ww"
+                    buttonText="S'abonner"
                  />
                 <PriceCard
                     title="Entreprise"
                     price={99.99}
                     features={["detection d'intrusion", "notifications en temps réel", "images enregistrées","images en temps réel", "deploiement sur plusieurs sites", "support 24/7","integration avec votre système de sécurité existant","Intelligence Artificielle personnalisée"]}
                     description="Parfait pour les grandes entreprises ou les pro ayant des besoins particuliers"
-                    url="https://buy.stripe.com/test_7sIcNf9yafRj6Zy8ww"
+                    url="mailto:laimeche160@gmail.com?subject=Demande de renseignements sur l'offre Entreprise&body=Bonjour, je suis intéressé par l'offre Entreprise du système Pretorian, pouvez-vous me contacter pour un devis personnalisé ? Voici mon numéro de téléphone : [06 00 00 00 00]. MODIFIEZ ICI."
+                    buttonText="Contactez-nous"
                  />
               </div>
           </div>

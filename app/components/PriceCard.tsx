@@ -10,10 +10,11 @@ interface PriceCardProps {
     price: number
     features: string[]
     description: string
+    buttonText: string
     url: string
 }
 
-export default function PriceCard({title, price, features,description,url}: PriceCardProps){
+export default function PriceCard({title, price, features,description,buttonText,url}: PriceCardProps){
 
 
     return(
@@ -56,7 +57,7 @@ export default function PriceCard({title, price, features,description,url}: Pric
         </CardContent>
         <CardFooter className="flex justify-center">
           <Link href={url}>
-            <Button>S'abonner</Button>
+            <Button>{buttonText}</Button>
           </Link>
         </CardFooter>
       </Card>
