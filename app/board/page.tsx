@@ -7,12 +7,15 @@ import { load as cocoSSDLoad, type ObjectDetection } from '@tensorflow-models/co
 import * as tf from '@tensorflow/tfjs'
 import Webcam from 'react-webcam'
 import { Detected, sendPicture } from '@/lib/send-detection/action'
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@radix-ui/react-dropdown-menu'
 
 export default function Board() {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
   const webcamRefs = useRef<Webcam[]>([])
   const [net, setNet] = useState<ObjectDetection | null>(null)
+  const [cameraChecked, setCameraChecked] = useState<boolean[]>([])
 
   async function runCocoSsd() {
     const loadedNet = await cocoSSDLoad()
@@ -42,6 +45,7 @@ export default function Board() {
       .then(devices => {
         const videoDevices = devices.filter(device => device.kind === 'videoinput')
         setCameras(videoDevices)
+        setCameraChecked(videoDevices.map(() => true))
       })
       .then(() => runCocoSsd())
 
@@ -69,8 +73,27 @@ export default function Board() {
         <Card key={index} className="flex flex-col items-center">
           <CardHeader>
             <CardTitle>{camera.label}</CardTitle>
+            <CardDescription>
+              <div className="flex item-center">
+              <Switch
+                id={camera.deviceId}
+                defaultChecked
+                checked={cameraChecked[index]}
+                onCheckedChange={(checked) => {
+                  setCameraChecked((prev) => prev.map((_, i) => i === index ? checked : _))
+                }}
+                className="m-1 relative"
+              />
+               <strong>
+                {
+                  cameraChecked[index] ? 'On' : 'Off'
+                }
+               </strong>
+              </div>
+            </CardDescription>
           </CardHeader>
           <CardContent>
+          {cameraChecked[index] && (
             <Webcam
               audio={false}
               videoConstraints={{
@@ -86,6 +109,7 @@ export default function Board() {
               height={480}
               className='m-1 rounded-md border-gray-500 border-2'
             />
+          )}
           </CardContent>
         </Card>
       ))}

@@ -1,4 +1,4 @@
-import PriceCard from './components/PriceCard'
+import PriceCard from '../components/PriceCard'
 import Image from 'next/image'
 
 export default function Home() {
