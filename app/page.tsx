@@ -47,7 +47,8 @@ export default function Home() {
         <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center lg:w-1/2">
           <div className="mx-auto max-w-xl text-center">
             <h1 className="text-3xl font-extrabold sm:text-5xl">
-              OK et après ?
+              Quels sont les avantages 
+              <strong className="font-extrabold  sm:block"> du système Pretorian ?</strong>
             </h1>
 
             <p className="mt-4 sm:text-xl/relaxed">
@@ -69,7 +70,7 @@ export default function Home() {
                     buttonText="S'abonner"
                  />
                 <PriceCard
-                    title="Mensuel avec engagement 1 an"
+                    title="1 an sans engagement"
                     price={9.99}
                     features={["detection d'intrusion", "notifications en temps réel", "images enregistrées"]}
                     description="Parfait pour les appartements, maisons ou commerces"
