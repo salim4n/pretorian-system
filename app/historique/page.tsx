@@ -4,7 +4,7 @@ import '@tensorflow/tfjs-backend-webgl'
 import * as tf from '@tensorflow/tfjs'
 import * as React from "react"
 import { addDays, format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { BotIcon, Calendar as CalendarIcon, CrossIcon } from "lucide-react"
 import { DateRange } from "react-day-picker"
 import { cn, drawRect } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -19,8 +19,18 @@ import {
     ObjectDetection,
   } from '@tensorflow-models/coco-ssd'
 
+  import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+import { toast } from 'sonner'
+import { Badge } from '@/components/ui/badge'
 
-// ts-ignore
 export default function Historique(){
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
@@ -29,39 +39,89 @@ export default function Historique(){
         from: new Date(actualYear, actualMonth, 1),
         to: addDays(new Date(actualYear, actualMonth, 1), 6)
     })
-
+    const [model, setModel] = useState<ObjectDetection>(null)
     const [pictures, setPictures] = useState<string[]>([])
-    const canvasRefs = useRef<HTMLCanvasElement[]>([])
+    const [picture, setPicture] = useState<string>("")
+
+    const loadModel = async () => {
+        await load().then((model) => {
+            setModel(model)
+            toast("Modèle chargé avec succès"),{
+                description: "Vous pouvez maintenant lancer les détections sur les images.",
+                className: "bg-success",
+                important: true,
+                icon : <BotIcon />
+            }
+        }).catch((error) => {
+            toast("Erreur lors du chargement du modèle", {
+                description : error.message,
+                className: "bg-error",
+                important: true,
+                icon : <CrossIcon />
+            })
+        })
+    }
 
     useEffect(() => {
         tf.setBackend('webgl')
-        async function fetchPicturesFromRange() {
-            if (date && date.from && date.to) {
-                const fromDateStr = date.from.toISOString()
-                const toDateStr = date.to.toISOString()
-                const pictures = await getPictures(fromDateStr, toDateStr)
-                setPictures(pictures);
-            }
+        loadModel()
+    }, [])
+
+    async function fetchPicturesFromRange() {
+        if (date && date.from && date.to) {
+            const fromDateStr = date.from.toISOString()
+            const toDateStr = date.to.toISOString()
+            const pictures = await getPictures(fromDateStr, toDateStr)
+            setPictures(pictures)
         }
+    }
+
+    useEffect(() => {
         fetchPicturesFromRange()
     }, [date])
 
-    const handleImageClick = async (picture: string, index: number) => {
-        const img = new window.Image();
-        img.src = picture;
-        img.onload = async () => {
-            const net: ObjectDetection = await load();
-            const canvas = canvasRefs.current[index];
-            const context = canvas.getContext('2d');
-            if (context) {
-                context.clearRect(0, 0, canvas.width, canvas.height); // Clear previous drawings
-                context.drawImage(img, 0, 0, canvas.width, canvas.height);
-                const detections = await net.detect(img);
-                drawRect(detections, context);
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+
+    function handleCreateCanvas(){
+        const img = new window.Image()
+            img.crossOrigin = "anonymous"
+            img.src = picture
+            img.onload = async () => {
+                const canvas = canvasRef.current
+                const context = canvas?.getContext('2d')
+                if (context) {
+                    context.drawImage(img, 0, 0, canvas.width, canvas.height)
             }
-        };
-    };
-//
+        }
+    }
+
+
+    async function handleRunDetection(){
+        const img = new window.Image()
+        img.crossOrigin = "anonymous"
+        img.src = picture
+        img.onload = async () => {
+            const canvas = canvasRef.current
+            const context = canvas?.getContext('2d')
+            if (context) {
+                context.drawImage(img, 0, 0, canvas.width, canvas.height)
+                const predictions = model && await model.detect(canvas)
+                predictions.forEach((prediction) => {
+                    const [x, y, width, height] = prediction.bbox
+                    const text = `${prediction.class} (${Math.round(prediction.score * 100)}%)`
+                    context.strokeStyle = "tomato"
+                    context.lineWidth = 2
+                    context.font = "20px Arial"
+                    context.fillStyle = "tomato"
+                    context.fillText(text, x, y)
+                    context.rect(x, y, width, height)
+                    context.stroke()
+
+                })
+            }
+        }
+    }
+
     return (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
             <Card className="m-3">
@@ -121,17 +181,62 @@ export default function Historique(){
                 <CardContent>
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
                         {pictures.map((picture, index) => (
-                            <Card key={index} className="flex flex-col items-center w-full border-transparent">
+                            <Card key={index} 
+                                className="flex flex-col items-center w-full border-transparent"
+                            >
                                 <CardHeader>
                                     <CardDescription>
+                                    <Dialog>
+                                        <DialogTrigger>
                                         <Image
                                             src={picture}
                                             alt={"Image de la detection"}
                                             width={200}
                                             height={200}
                                             className="rounded-lg w-full cursor-pointer"
-                                            onClick={() => handleImageClick(picture, index)}
+                                            onClick={() => {
+                                                setPicture(picture)
+                                                handleCreateCanvas()
+                                            }}
                                         />
+                                          </DialogTrigger>
+                                            <DialogContent className='max-w-full max-h-full'>
+                                                <DialogHeader className='flex-row'>
+                                                    <DialogTitle className='m-2'>
+                                                        <Badge variant="default">Detection</Badge>
+                                                    </DialogTitle>
+                                                    <DialogDescription>
+                                                        <Button
+                                                            variant="outline"
+                                                            onClick={() => {
+                                                                handleRunDetection()
+                                                            }}
+                                                        >
+                                                            Run Detection
+                                                        </Button>
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="flex justify-center">
+                                                <canvas 
+                                                    ref={canvasRef} 
+                                                    width={640} 
+                                                    height={480} 
+                                                    className='max-w-full max-h-full rounded-lg'
+                                                />
+                                                </div>
+                                                <DialogFooter>
+                                                <Button
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        setPicture("")
+                                                        toast("Detection supprimée")
+                                                    }}
+                                                >
+                                                    Supprimer
+                                                </Button>
+                                            </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -140,5 +245,7 @@ export default function Historique(){
                 </CardContent>
             </Card>
         </div>
+        
+
     )
 }

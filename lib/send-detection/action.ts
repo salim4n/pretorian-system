@@ -36,32 +36,32 @@ export type Detected =  {
 }
 
 export async function getPictures(dateFrom: string | number | Date, dateTo: string | number | Date) {
-    const containerClient = blobServiceClient.getContainerClient(containerName);
-    const blobs = containerClient.listBlobsFlat();
-    const blobsArray = [];
+    const containerClient = blobServiceClient.getContainerClient(containerName)
+    const blobs = containerClient.listBlobsFlat()
+    const blobsArray = []
 
     for await (const blob of blobs) {
-        blobsArray.push(blob);
+        blobsArray.push(blob)
     }
 
     const filteredBlobs = blobsArray.filter(blob => {
-        const date = new Date(blob.properties.lastModified);
-        return date >= new Date(dateFrom) && date <= new Date(dateTo);
-    });
+        const date = new Date(blob.properties.lastModified)
+        return date >= new Date(dateFrom) && date <= new Date(dateTo)
+    })
 
     const images = await Promise.all(filteredBlobs.map(async blob => {
-        const imageUrl = await generateSasToken(containerName, blob.name);
-        return imageUrl;
-    }));
+        const imageUrl = await generateSasToken(containerName, blob.name)
+        return imageUrl
+    }))
 
-    return images;
+    return images
 }
 
 export async function sendPicture(body: Detected){
 try{
     const picture = body.picture
-    const base64Data =  picture && picture.replace(/^data:image\/webp;base64,/, '')
-    const buffer = base64Data && Buffer.from(base64Data, 'base64');
+    const base64Data =  picture && picture.replace(/^data:image\/webpbase64,/, '')
+    const buffer = base64Data && Buffer.from(base64Data, 'base64')
     const blobName = `${uuidv4()}.png`
     const containerClient = blobServiceClient.getContainerClient(containerName)
     const blockBlobClient = containerClient.getBlockBlobClient(blobName)

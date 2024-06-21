@@ -1,4 +1,4 @@
-import { DetectedObject } from "@tensorflow-models/coco-ssd";
+import { DetectedObject } from "@tensorflow-models/coco-ssd"
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -23,12 +23,12 @@ export function drawRect(
     context.strokeRect(x, y, width, height)
 
     // draw label bg
-    context.fillStyle = getRandomColor()
+    context.fillStyle = "#000000"
     const textW = context.measureText(label).width + 10
     context.fillRect(x, y, textW, -16)
 
     // text on top
-    context.fillStyle = getRandomColor()
+    context.fillStyle = "#ffffff"
     context.fillText(label, x, y)
   })
 }
