@@ -23,7 +23,7 @@ import {
 interface HistoriqueProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 // ts-ignore
-export default function Historique({ className }: HistoriqueProps) {
+export  function Historique({ className }: HistoriqueProps) {
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
     const actualMonth = actualDate.getMonth()
