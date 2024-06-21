@@ -144,3 +144,4 @@ export default function Historique({ className }: HistoriqueProps) {
         </div>
     )
 }
+/* eslint-enable */
