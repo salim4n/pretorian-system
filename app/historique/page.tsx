@@ -20,8 +20,9 @@ import {
     ObjectDetection,
   } from '@tensorflow-models/coco-ssd'
 
+  interface HistoriqueProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export default function Historique({ className }: HTMLAttributes<HTMLDivElement>) {
+export default function Historique({ className }: HistoriqueProps) {
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
     const actualMonth = actualDate.getMonth()
