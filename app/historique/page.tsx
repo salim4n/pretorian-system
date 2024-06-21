@@ -1,8 +1,5 @@
 "use client"
 
-
-import { NextPage } from 'next';
-import '@tensorflow/tfjs-backend-cpu'
 import '@tensorflow/tfjs-backend-webgl'
 import * as tf from '@tensorflow/tfjs'
 import * as React from "react"
@@ -12,7 +9,7 @@ import { DateRange } from "react-day-picker"
 import { cn, drawRect } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import { HTMLAttributes, useEffect, useRef, useState } from "react"
+import {  useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { getPictures } from "@/lib/send-detection/action"
@@ -22,13 +19,9 @@ import {
     ObjectDetection,
   } from '@tensorflow-models/coco-ssd'
 
-  interface HistoriqueProps {
-    className?: string;
-    // Autres props nécessaires
-  }
 
 // ts-ignore
-const Historique: NextPage<HistoriqueProps> = ({ className }) => {
+export default function Historique(){
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
     const actualMonth = actualDate.getMonth()
@@ -73,7 +66,7 @@ const Historique: NextPage<HistoriqueProps> = ({ className }) => {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
             <Card className="m-3">
                 <CardContent>
-                    <div className={cn("grid gap-2", className)}>
+                    <div className={cn("grid gap-2")}>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button
@@ -149,5 +142,3 @@ const Historique: NextPage<HistoriqueProps> = ({ className }) => {
         </div>
     )
 }
-
-export default Historique
