@@ -1,5 +1,7 @@
 "use client"
 
+
+import { NextPage } from 'next';
 import '@tensorflow/tfjs-backend-cpu'
 import '@tensorflow/tfjs-backend-webgl'
 import * as tf from '@tensorflow/tfjs'
@@ -20,10 +22,13 @@ import {
     ObjectDetection,
   } from '@tensorflow-models/coco-ssd'
 
-interface HistoriqueProps extends React.HTMLAttributes<HTMLDivElement> {}
+  interface HistoriqueProps {
+    className?: string;
+    // Autres props nécessaires
+  }
 
 // ts-ignore
-const Historique: React.FC<HistoriqueProps> = ({ className }) => {
+const Historique: NextPage<HistoriqueProps> = ({ className }) => {
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
     const actualMonth = actualDate.getMonth()
