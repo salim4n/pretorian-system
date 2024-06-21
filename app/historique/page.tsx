@@ -19,7 +19,9 @@ import {
     load,
     ObjectDetection,
   } from '@tensorflow-models/coco-ssd'
-export default function Historique({ className }: { className?: string }) {
+
+
+export default function Historique({ className }: React.HTMLAttributes<HTMLDivElement>) {
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
     const actualMonth = actualDate.getMonth()
