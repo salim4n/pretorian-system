@@ -54,7 +54,7 @@ export default function Board() {
       }
       tf.disposeVariables()
     }
-  }, [])
+  }, [net])
 
   useEffect(() => {
     if (net) {
