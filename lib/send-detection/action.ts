@@ -35,6 +35,28 @@ export type Detected =  {
     picture?: string
 }
 
+export async function getPictures(dateFrom: string | number | Date, dateTo: string | number | Date) {
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blobs = containerClient.listBlobsFlat();
+    const blobsArray = [];
+
+    for await (const blob of blobs) {
+        blobsArray.push(blob);
+    }
+
+    const filteredBlobs = blobsArray.filter(blob => {
+        const date = new Date(blob.properties.lastModified);
+        return date >= new Date(dateFrom) && date <= new Date(dateTo);
+    });
+
+    const images = await Promise.all(filteredBlobs.map(async blob => {
+        const imageUrl = await generateSasToken(containerName, blob.name);
+        return imageUrl;
+    }));
+
+    return images;
+}
+
 export async function sendPicture(body: Detected){
 try{
     const picture = body.picture

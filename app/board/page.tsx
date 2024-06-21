@@ -9,7 +9,6 @@ import Webcam from 'react-webcam'
 import { Detected, sendPicture } from '@/lib/send-detection/action'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card'
 import { Switch } from '@/components/ui/switch'
-import { Label } from '@radix-ui/react-dropdown-menu'
 
 export default function Board() {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
