@@ -22,7 +22,7 @@ import {
 
 interface HistoriqueProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-/* eslint-disable */
+// ts-ignore
 export default function Historique({ className }: HistoriqueProps) {
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
@@ -144,4 +144,3 @@ export default function Historique({ className }: HistoriqueProps) {
         </div>
     )
 }
-/* eslint-enable */
