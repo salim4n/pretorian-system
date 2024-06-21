@@ -10,7 +10,7 @@ import { DateRange } from "react-day-picker"
 import { cn, drawRect } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import { useEffect, useRef, useState } from "react"
+import { HTMLAttributes, useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { getPictures } from "@/lib/send-detection/action"
@@ -21,7 +21,7 @@ import {
   } from '@tensorflow-models/coco-ssd'
 
 
-export default function Historique({ className }: React.HTMLAttributes<HTMLDivElement>) {
+export default function Historique({ className }: HTMLAttributes<HTMLDivElement>) {
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
     const actualMonth = actualDate.getMonth()
