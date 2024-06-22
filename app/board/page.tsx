@@ -9,16 +9,21 @@ import Webcam from 'react-webcam'
 import { Detected, sendPicture } from '@/lib/send-detection/action'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card'
 import { Switch } from '@/components/ui/switch'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export default function Board() {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
   const webcamRefs = useRef<Webcam[]>([])
   const [net, setNet] = useState<ObjectDetection | null>(null)
   const [cameraChecked, setCameraChecked] = useState<boolean[]>([])
+  const [modelLoading, setModelLoading] = useState(true)
 
   async function runCocoSsd() {
     const loadedNet = await cocoSSDLoad()
     setNet(loadedNet)
+    setModelLoading(false)
   }
 
   async function runObjectDetection(net: ObjectDetection) {
@@ -63,10 +68,50 @@ export default function Board() {
     }
   }, [net])
 
+  if(modelLoading){
+    return(
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
+             <Card className="m-3 z-50">
+            <CardContent className='m-5'>
+                <div className='w-full text-center flex justify-center items-center'>
+                <Avatar className='w-48 h-48'>
+                    <AvatarImage src="/icon.jpeg" />
+                    <AvatarFallback>PR</AvatarFallback>
+                </Avatar>
+                <Badge variant="default" className='mt-4'>
+                <strong className='ml-4'>
+                            {modelLoading  && "Chargement du modèle de reconnaissance" }
+                        </strong>
+                </Badge>
+                </div>
+            </CardContent>
+        </Card>
+        <Card className="m-3 w-full lg:col-span-2 flex-grow">
+            <CardContent>
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
+                    {
+                        Array.from({ length: 4 }).map((_, index) => (
+                            <Card key={index}>
+                                <CardHeader>
+                                    <Skeleton className="w-full h-10" />
+                                </CardHeader>
+                                <CardContent>
+                                    <Skeleton className="w-full h-40" />
+                                </CardContent>
+                            </Card>
+                        ))
+                    }
+                </div>
+            </CardContent>
+        </Card>
+    </div>
+    )
+}
+
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
       {cameras.map((camera, index) => (
-        <Card key={index} className="flex flex-col items-center">
+        <Card key={index} className="flex flex-col items-center mt-5">
           <CardHeader>
             <CardTitle>{camera.label}</CardTitle>
             <CardDescription>

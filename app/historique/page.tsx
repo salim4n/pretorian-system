@@ -4,7 +4,7 @@ import '@tensorflow/tfjs-backend-webgl'
 import * as tf from '@tensorflow/tfjs'
 import * as React from "react"
 import { addDays, format } from "date-fns"
-import { BotIcon, Calendar as CalendarIcon, DownloadCloudIcon, LucideTrash2, PictureInPicture2Icon } from "lucide-react"
+import { BotIcon, Calendar as CalendarIcon, LucideTrash2, PictureInPicture2Icon } from "lucide-react"
 import { DateRange } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -30,6 +30,7 @@ import { Badge } from '@/components/ui/badge'
 import { useToast } from "@/components/ui/use-toast"
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Label } from '@radix-ui/react-dropdown-menu'
 
 export default function Historique(){
     const [loading, setLoading] = useState<boolean>(false)
@@ -47,6 +48,8 @@ export default function Historique(){
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [isDownloading, setIsDownloading] = useState<boolean>(false)
     const [modelLoading, setModelLoading] = useState<boolean>(false)
+    const [detectionDone, setDetectionDone] = useState(false)
+    const [imageUrl, setImageUrl] = useState(null)
 
     const loadModel = async () => {
         setLoading(true)
@@ -203,9 +206,13 @@ export default function Historique(){
 
     return (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
-            <Card className="m-3">
+            <Card className="m-3 item-center text-center">
                 <CardHeader>
-                    <div className={cn("grid gap-2")}>
+                    <Label className="text-center"><strong>Selectionnez une période</strong></Label>
+                    
+                </CardHeader>
+                <CardContent>
+                <div className={cn("grid gap-2")}>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button
@@ -243,15 +250,6 @@ export default function Historique(){
                             </PopoverContent>
                         </Popover>
                     </div>
-                </CardHeader>
-                <CardContent>
-                    <Button
-                        className="w-full text-center bg-blue-500 text-white hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-800"
-                        disabled={pictures?.length === 0}
-                    >
-                        <DownloadCloudIcon className="mr-2 h-4 w-4" />
-                        {`Télécharger toutes les detections de la periode selectionnée - ${pictures?.length} detections`}
-                    </Button>
                 </CardContent>
             </Card>
             <Card className="m-3">

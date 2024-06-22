@@ -80,6 +80,30 @@ export async function sendPicture(body: Detected){
     }
 }
 
+export async function downloadPictures(dateFrom: string | number | Date, dateTo: string | number | Date){
+    const containerClient = blobServiceClient.getContainerClient(containerName)
+    const blobs = containerClient.listBlobsFlat()
+    const blobsArray = []
+
+    for await (const blob of blobs) {
+        blobsArray.push(blob)
+    }
+
+    const filteredBlobs = blobsArray.filter(blob => {
+        const date = new Date(blob.properties.lastModified)
+        return date >= new Date(dateFrom) && date <= new Date(dateTo)
+    })
+
+    const images = await Promise.all(filteredBlobs.map(async blob => {
+        const imageUrl = await generateSasToken(containerName, blob.name)
+        return imageUrl
+    }))
+    console.log(`Pictures downloaded: ${images.length}`)
+    console.table(images)
+
+    return images
+}
+
 export async function deletePictures(dateFrom: string | number | Date, dateTo: string | number | Date) {
     const containerClient = blobServiceClient.getContainerClient(containerName)
     const blobs = containerClient.listBlobsFlat()
@@ -120,7 +144,7 @@ const sendTelegramMessage = async (token: string, chatId: string, message: strin
     return response.json()
 }
 
-const generateSasToken = async (containerName: string, blobName: string): Promise<string> => {
+export const generateSasToken = async (containerName: string, blobName: string): Promise<string> => {
     const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey)
     const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`, sharedKeyCredential)
     const containerClient = blobServiceClient.getContainerClient(containerName)
