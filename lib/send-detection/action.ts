@@ -78,6 +78,31 @@ try{
 }
 }
 
+export async function deletePictures(dateFrom: string | number | Date, dateTo: string | number | Date) {
+    const containerClient = blobServiceClient.getContainerClient(containerName)
+    const blobs = containerClient.listBlobsFlat()
+    const blobsArray = []
+
+    for await (const blob of blobs) {
+        blobsArray.push(blob)
+    }
+
+    const filteredBlobs = blobsArray.filter(blob => {
+        const date = new Date(blob.properties.lastModified)
+        return date >= new Date(dateFrom) && date <= new Date(dateTo)
+    })
+
+    await Promise.all(filteredBlobs.map(async blob => {
+        const blobClient = containerClient.getBlobClient(blob.name)
+        await blobClient.delete()
+        console.log(`Blob deleted: ${blob.name}`)
+        })
+    )
+    return filteredBlobs.length
+
+
+}
+
 const sendTelegramMessage = async (token: string, chatId: string, message: string) => {
     const url = `https://api.telegram.org/bot${token}/sendMessage`
     const response = await fetch(url, {

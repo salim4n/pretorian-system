@@ -4,34 +4,36 @@ import '@tensorflow/tfjs-backend-webgl'
 import * as tf from '@tensorflow/tfjs'
 import * as React from "react"
 import { addDays, format } from "date-fns"
-import { BotIcon, Calendar as CalendarIcon, CrossIcon } from "lucide-react"
+import { BotIcon, Calendar as CalendarIcon, DownloadCloudIcon, LucideTrash2, PictureInPicture2Icon } from "lucide-react"
 import { DateRange } from "react-day-picker"
-import { cn, drawRect } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {  useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { getPictures } from "@/lib/send-detection/action"
+import { deletePictures, getPictures } from "@/lib/send-detection/action"
 import Image from "next/image"
 import {
     load,
     ObjectDetection,
   } from '@tensorflow-models/coco-ssd'
-
-  import {
+import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
-import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
+import { useToast } from "@/components/ui/use-toast"
+import { Skeleton } from '@/components/ui/skeleton'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function Historique(){
+    const [loading, setLoading] = useState<boolean>(false)
+    const { toast } = useToast()
     const actualDate = new Date()
     const actualYear = actualDate.getFullYear()
     const actualMonth = actualDate.getMonth()
@@ -42,30 +44,30 @@ export default function Historique(){
     const [model, setModel] = useState<ObjectDetection>(null)
     const [pictures, setPictures] = useState<string[]>([])
     const [picture, setPicture] = useState<string>("")
+    const [isDeleting, setIsDeleting] = useState<boolean>(false)
+    const [isDownloading, setIsDownloading] = useState<boolean>(false)
+    const [modelLoading, setModelLoading] = useState<boolean>(false)
 
     const loadModel = async () => {
+        setLoading(true)
+        setModelLoading(true)
         await load().then((model) => {
             setModel(model)
-            toast("Modèle chargé avec succès"),{
-                description: "Vous pouvez maintenant lancer les détections sur les images.",
-                className: "bg-success",
-                important: true,
-                icon : <BotIcon />
-            }
-        }).catch((error) => {
-            toast("Erreur lors du chargement du modèle", {
-                description : error.message,
-                className: "bg-error",
-                important: true,
-                icon : <CrossIcon />
+            toast({
+                title: "Modèle de reconnaissance chargé",
+                description: "Vous pouvez maintenant lancer la reconnaissance en cliquant sur une image"
             })
+        }).catch((_error) => {
+            toast({
+                title: "Erreur lors du chargement du modèle de reconnaissance",
+                description: "Verifiez votre connexion internet et rechargez la page",
+              })
+        })
+        .finally(() => {
+            setLoading(false)
+            setModelLoading(false)
         })
     }
-
-    useEffect(() => {
-        tf.setBackend('webgl')
-        loadModel()
-    }, [])
 
     async function fetchPicturesFromRange() {
         if (date && date.from && date.to) {
@@ -75,6 +77,11 @@ export default function Historique(){
             setPictures(pictures)
         }
     }
+
+    useEffect(() => {
+        tf.setBackend('webgl')
+        loadModel()
+    }, [])
 
     useEffect(() => {
         fetchPicturesFromRange()
@@ -94,7 +101,6 @@ export default function Historique(){
             }
         }
     }
-
 
     async function handleRunDetection(){
         const img = new window.Image()
@@ -116,16 +122,89 @@ export default function Historique(){
                     context.fillText(text, x, y)
                     context.rect(x, y, width, height)
                     context.stroke()
-
                 })
             }
         }
     }
 
+    async function handleDeleteAllSelection(){
+        setLoading(true)
+        setIsDeleting(true)
+        await deletePictures(date.from, date.to)
+            .then((_res) => {
+                setPictures([])
+                toast({
+                    title: "Suppression des detections",
+                    description: `Toutes les detections de la periode selectionnée ont été supprimées`,
+                })
+            })
+            .catch((error) => {
+                setLoading(false)
+                toast({
+                    title: "Erreur lors de la suppression des detections",
+                    description: error.message,
+                })
+            })
+            .finally(() => {
+                setLoading(false)
+                setIsDeleting(false)
+            })
+    }
+
+    if(loading){
+        return(
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
+                 <Card className="m-3 z-50">
+                <CardContent className='m-5'>
+                    <div className='w-full text-center flex justify-center items-center'>
+                    <Avatar className='w-48 h-48'>
+                        <AvatarImage src="/icon.jpeg" />
+                        <AvatarFallback>PR</AvatarFallback>
+                    </Avatar>
+                    <Badge variant="default" className='mt-4'>
+                    <strong className='ml-4'>
+                                {modelLoading  && "Chargement du modèle de reconnaissance" }
+                                {isDeleting && "Suppression des detections en cours" }
+                                {isDownloading && "Téléchargement des detections en cours" }
+                            </strong>
+                    </Badge>
+                    </div>
+                </CardContent>
+            </Card>
+            <Card className="m-3">
+                <CardHeader>
+                    <Skeleton className="w-full h-10" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="w-full h-10" />
+                </CardContent>
+            </Card>
+            <Card className="m-3 w-full lg:col-span-2 flex-grow">
+                <CardContent>
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
+                        {
+                            Array.from({ length: 10 }).map((_, index) => (
+                                <Card key={index}>
+                                    <CardHeader>
+                                        <Skeleton className="w-full h-10" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <Skeleton className="w-full h-10" />
+                                    </CardContent>
+                                </Card>
+                            ))
+                        }
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+        )
+    }
+
     return (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
             <Card className="m-3">
-                <CardContent>
+                <CardHeader>
                     <div className={cn("grid gap-2")}>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -164,6 +243,15 @@ export default function Historique(){
                             </PopoverContent>
                         </Popover>
                     </div>
+                </CardHeader>
+                <CardContent>
+                    <Button
+                        className="w-full text-center bg-blue-500 text-white hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-800"
+                        disabled={pictures?.length === 0}
+                    >
+                        <DownloadCloudIcon className="mr-2 h-4 w-4" />
+                        {`Télécharger toutes les detections de la periode selectionnée - ${pictures?.length} detections`}
+                    </Button>
                 </CardContent>
             </Card>
             <Card className="m-3">
@@ -173,9 +261,20 @@ export default function Historique(){
                         -
                         {date?.to?.toLocaleDateString('fr-FR', { month: 'long', day: 'numeric', year: 'numeric' }) || new Date().toLocaleDateString('fr-FR', { month: 'long', day: 'numeric', year: 'numeric' })}
                         <br />
-                        <span className="text-muted-foreground"> ({pictures.length} detections)</span>
+                        <span className="text-muted-foreground"> ({pictures?.length} detections)</span>
                     </strong>
                 </CardHeader>
+                <CardContent>
+                    <Button
+                        className=' w-full text-center mt-4 bg-red-500 text-white hover:bg-red-600 focus:bg-red-700 active:bg-red-800'
+                        variant="destructive"
+                        disabled={pictures?.length === 0}
+                        onClick={handleDeleteAllSelection}
+                    >
+                        <LucideTrash2 className="mr-2 h-4 w-4" />
+                        {`Supprimer toutes les detections de la periode selectionnée - ${pictures?.length} detections`}
+                    </Button>
+                </CardContent>
             </Card>
             <Card className="m-3 w-full lg:col-span-2 flex-grow">
                 <CardContent>
@@ -203,16 +302,21 @@ export default function Historique(){
                                             <DialogContent className='max-w-full max-h-full'>
                                                 <DialogHeader className='flex-row'>
                                                     <DialogTitle className='m-2'>
-                                                        <Badge variant="default">Detection</Badge>
+                                                        <Badge variant="default">
+                                                            <PictureInPicture2Icon className="mr-2 h-4 w-4" />
+                                                            <span className="text-white">{index + 1}</span>
+                                                        </Badge>
                                                     </DialogTitle>
                                                     <DialogDescription>
                                                         <Button
                                                             variant="outline"
+                                                            className='bg-blue-500 text-white hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-800 hover:text-white focus:text-white active:text-white'
                                                             onClick={() => {
                                                                 handleRunDetection()
                                                             }}
                                                         >
-                                                            Run Detection
+                                                            <BotIcon className="mr-2 h-4 w-4" />
+                                                            Lancer la  reconnaissance
                                                         </Button>
                                                     </DialogDescription>
                                                 </DialogHeader>
@@ -224,17 +328,6 @@ export default function Historique(){
                                                     className='max-w-full max-h-full rounded-lg'
                                                 />
                                                 </div>
-                                                <DialogFooter>
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => {
-                                                        setPicture("")
-                                                        toast("Detection supprimée")
-                                                    }}
-                                                >
-                                                    Supprimer
-                                                </Button>
-                                            </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
                                     </CardDescription>
@@ -245,7 +338,5 @@ export default function Historique(){
                 </CardContent>
             </Card>
         </div>
-        
-
     )
 }
