@@ -58,24 +58,26 @@ export async function getPictures(dateFrom: string | number | Date, dateTo: stri
 }
 
 export async function sendPicture(body: Detected){
-try{
-    const picture = body.picture
-    const base64Data =  picture && picture.replace(/^data:image\/webpbase64,/, '')
-    const buffer = base64Data && Buffer.from(base64Data, 'base64')
-    const blobName = `${uuidv4()}.png`
-    const containerClient = blobServiceClient.getContainerClient(containerName)
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName)
-    buffer && await blockBlobClient.upload(buffer, buffer.length)
-    await blockBlobClient.setMetadata({class : body.detected.class})
-    console.log(`Picture uploaded: ${blobName}`)
-    //now we can send to the telegram bot too
-    const imageUrl = await generateSasToken(containerName, blobName)
-    const message = `Detected: ${body.detected.class}, Confidence: ${body.detected.score.toPrecision(2)} \n Picture: ${imageUrl}`
-    await sendTelegramMessage(token, chatId, message)
-    console.log(`Message sent to telegram: ${message}`)
-}catch(e){
-    console.error(e)
-}
+    try{
+        const picture = body.picture
+        const base64Data =  picture && picture.replace(/^data:image\/webp;base64,/, '')
+        const buffer = base64Data && Buffer.from(base64Data, 'base64')
+        const blobName = `${uuidv4()}.png`
+        const containerClient = blobServiceClient.getContainerClient(containerName)
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName)
+        buffer && await blockBlobClient.upload(buffer, buffer.length, {
+            blobHTTPHeaders: { blobContentType: "image/png" }
+        });
+        await blockBlobClient.setMetadata({class : body.detected.class})
+        console.log(`Picture uploaded: ${blobName}`)
+        //now we can send to the telegram bot too
+        const imageUrl = await generateSasToken(containerName, blobName)
+        const message = `Detected: ${body.detected.class}, Confidence: ${body.detected.score.toPrecision(2)} \n Picture: ${imageUrl}`
+        await sendTelegramMessage(token, chatId, message)
+        console.log(`Message sent to telegram: ${message}`)
+    }catch(e){
+        console.error(e)
+    }
 }
 
 export async function deletePictures(dateFrom: string | number | Date, dateTo: string | number | Date) {
