@@ -8,10 +8,10 @@ const { v4: uuidv4 } = require('uuid')
 
 dotenv.config()
 
-const accountName = process.env.AZURE_STORAGE_NAME as string
-const accountKey = process.env.AZURE_STORAGE_KEY as string
+const accountName = process.env.AUTH_AZURE_ACCOUNT as string
+const accountKey = process.env.AUTH_AZURE_ACCESS_KEY as string
 const containerName = process.env.AZURE_STORAGE_CONTAINER as string
-const connectionString = process.env.CONNECTION_STRING as string
+const connectionString = process.env.AUTH_AZURE_STORAGE_CONNECTION_STRING as string
 const token = process.env.TELEGRAM_BOT_TOKEN as string
 const chatId = process.env.TELEGRAM_CHAT_ID as string
 
