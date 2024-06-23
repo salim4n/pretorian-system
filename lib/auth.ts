@@ -3,8 +3,9 @@ import NextAuth, { type NextAuthConfig } from "next-auth"
 import { TableStorageAdapter } from "@auth/azure-tables-adapter"
 import { AzureNamedKeyCredential, TableClient } from "@azure/data-tables"
 import Resend from "next-auth/providers/resend"
-//test update on azure env
+import * as dotenv from 'dotenv'
 
+dotenv.config()
 const azureAccount = process.env.AUTH_AZURE_ACCOUNT
 const azureAccessKey = process.env.AUTH_AZURE_ACCESS_KEY
 const azureTablesEndpoint = process.env.AUTH_AZURE_TABLES_ENDPOINT
