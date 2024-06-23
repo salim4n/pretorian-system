@@ -1,10 +1,13 @@
-import { MenuSquareIcon } from "lucide-react"
+import {  MenuSquareIcon } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
 import { Button } from "../ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { ModeToggle } from "../mode-toggle"
 import Image from "next/image"
 import HeaderMenuNav from "../header-menu-nav"
+import Link from 'next/link'
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { Separator } from "../ui/separator"
 
 export default function Header() {
 
@@ -51,7 +54,14 @@ export default function Header() {
                         <DropdownMenuItem>Paramètres</DropdownMenuItem>
                         <DropdownMenuItem>Support</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Se deconnecter</DropdownMenuItem>
+                        <DropdownMenuItem>
+                           <Avatar className='w-4 h-4 mr-2'>
+                            <AvatarImage src="/icon.jpeg" />
+                            <AvatarFallback>PR</AvatarFallback>
+                        </Avatar>
+                        <Separator orientation="vertical" />
+                            <Link href="/login">Connexion</Link>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <ModeToggle />

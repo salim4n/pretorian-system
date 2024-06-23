@@ -47,7 +47,7 @@ export default function Home() {
           </div>
           <div className="mt-4 text-center text-sm">
             <span>Vous n'avez pas de compte ?</span>
-            <Link href="#" className="underline">
+            <Link href="/register" className="underline">
                 S'inscrire
             </Link>
           </div>

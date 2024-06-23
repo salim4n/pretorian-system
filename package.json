@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/azure-tables-adapter": "^1.4.1",
+    "@azure/data-tables": "^13.2.2",
     "@azure/storage-blob": "^12.18.0",
     "@hookform/resolvers": "^3.6.0",
     "@radix-ui/react-avatar": "^1.1.0",
@@ -18,6 +20,8 @@
     "@radix-ui/react-menubar": "^1.0.4",
     "@radix-ui/react-navigation-menu": "^1.1.4",
     "@radix-ui/react-popover": "^1.1.1",
+    "@radix-ui/react-select": "^2.1.1",
+    "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
@@ -30,6 +34,7 @@
     "dotenv": "^16.4.5",
     "lucide-react": "^0.394.0",
     "next": "^14.2.4",
+    "next-auth": "^5.0.0-beta.19",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-day-picker": "^8.10.1",
