@@ -19,6 +19,8 @@ if (!accountName) throw Error('Azure Storage accountName not found')
 if (!accountKey) throw Error('Azure Storage accountKey not found')
 if (!containerName) throw Error('Azure Storage containerName not found')
 if (!connectionString) throw Error('Azure Storage connectionString not found')
+if (!token) throw Error('Telegram Bot token not found')
+if (!chatId) throw Error('Telegram Chat ID not found')
 
 const sharedKeyCredential = new StorageSharedKeyCredential(
     accountName,
