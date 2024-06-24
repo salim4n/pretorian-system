@@ -15,35 +15,67 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 import { langageList } from "@/models/langage-list"
-import { signIn } from "next-auth/react"
+import { useActionState, useState } from "react"
+import { signup } from "@/app/lib/identity/auth"
+import { useToast } from "./ui/use-toast"
+import { useRouter } from 'next/navigation'
 
-const formSchema = z.object({
+export const signupFormSchema = z.object({
     name: z.string().min(2, { message: "Votre nom doit contenir au minimum deux caractères" }).max(50, { message: "Votre nom doit contenir au maximum 50 caractères" }),
     surname: z.string().min(2, { message: "Votre prénom doit contenir au minimum deux caractères" }).max(50, { message: "Votre prénom doit contenir au maximum 50 caractères" }),
     email: z.string().email({ message: "Veuillez entrer une adresse email valide" }),
     password: z.string().min(6).max(24),
-    confirmPassword: z.string().min(6).max(24),
-    country: z.string().min(2),
-    postalCode: z.string().length(5),
-    city: z.string().min(2).max(255),
-}).superRefine(({ confirmPassword, password }, ctx) => {
-    if (confirmPassword !== password) {
-        ctx.addIssue({
-            code: "custom",
-            message: "Les mots de passe ne correspondent pas",
-            path: ['confirmPassword']
-        })
-    }
 })
+    // confirmPassword: z.string().min(6).max(24),
+    // country: z.string().min(2),
+    // postalCode: z.string().length(5),
+    // city: z.string().min(2).max(255),
+// }).superRefine(({ confirmPassword, password }, ctx) => {
+//     if (confirmPassword !== password) {
+//         ctx.addIssue({
+//             code: "custom",
+//             message: "Les mots de passe ne correspondent pas",
+//             path: ['confirmPassword']
+//         })
+//     }
+// })
 
 export default function RegisterComponent() {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof signupFormSchema>>({
+        resolver: zodResolver(signupFormSchema),
     })
+    const {toast}= useToast()
+    const [loading, setLoading] = useState(false)
+    const router = useRouter()
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
-        await signIn("resend", { email: values.email })
+    async function onSubmit(values: z.infer<typeof signupFormSchema>) {
+        setLoading(true)
+        const result = await signup(values as FormData)
+
+        if (result?.errors) {
+            form.setError("email", {
+                type: "manual",
+                message: result.errors[0].message,
+            })
+            toast({
+                title: "Erreur",
+                description: result.errors[0].message,
+                content: "error",
+                color: "#EF4444",
+                duration: 5000,
+            }
+            )
+        } else {
+            toast({
+                title: "Inscription réussie",
+                description: "Vous êtes maintenant inscrit",
+                content: "success",
+                color: "#10B981",
+                duration: 5000,
+            })
+            router.push('/board')
+        }
+        setLoading(false)
     }
 
     return (
@@ -56,10 +88,11 @@ export default function RegisterComponent() {
                             S'inscrire pour continuer
                         </p>
                     </div>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <Form {...form} >
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                             <FormField
                                 control={form.control}
+
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
@@ -118,7 +151,7 @@ export default function RegisterComponent() {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="confirmPassword"
                                 render={({ field }) => (
@@ -188,9 +221,11 @@ export default function RegisterComponent() {
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
 
-                            <Button type="submit">S'inscrire</Button>
+                            <Button type="submit" disabled={loading}>
+                                {loading ? "Chargement..." : "S'inscrire"}
+                            </Button>
                         </form>
                     </Form>
                 </div>

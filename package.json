@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@auth/azure-tables-adapter": "^1.4.1",
     "@azure/data-tables": "^13.2.2",
     "@azure/storage-blob": "^12.18.0",
     "@hookform/resolvers": "^3.6.0",
@@ -28,10 +27,12 @@
     "@stripe/stripe-js": "^3.5.0",
     "@tensorflow-models/coco-ssd": "^2.2.3",
     "@tensorflow/tfjs": "^4.20.0",
+    "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
+    "jose": "^5.4.1",
     "lucide-react": "^0.394.0",
     "next": "^14.2.4",
     "next-auth": "^5.0.0-beta.19",
@@ -52,6 +53,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
