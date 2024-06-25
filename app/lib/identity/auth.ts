@@ -4,7 +4,9 @@ import * as dotenv from 'dotenv'
 import  { TableClient, AzureNamedKeyCredential } from '@azure/data-tables'
 const { v4: uuidv4 } = require('uuid')
 import bcrypt from 'bcrypt'
-import { createSession } from './session-local'
+import { createSession, deleteSession } from './session-local'
+import { createSessionBdd } from './session'
+import { redirect } from 'next/navigation'
 
 dotenv.config()
 
@@ -72,5 +74,66 @@ export async function signup(formData: any,device: string){
           user: user
         }
       })
+}
 
+export async function login(formData: any,device: string){
+    const validateResult = { 
+      email: formData.email,
+      password: formData.password,
+    }
+
+    const { email, password} = validateResult
+
+    // 3. Check if the user's email already exists
+    let entitiesIter = client.listEntities()
+    let i = 1
+    for await (const entity of entitiesIter) {
+      console.log(`Entity${i}: PartitionKey: ${entity?.partitionKey} RowKey: ${entity?.rowKey}`)
+      i++
+      if (entity.email === email){
+        const passwordMatch =  await bcrypt.compare(
+          password,
+          entity.password as string,
+        )
+
+        if(passwordMatch){
+          console.log('Password match')
+          const userEntity = {
+            partitionKey: entity.partitionKey as string,
+            rowKey: entity.rowKey as string,
+            name: entity.name as string,
+            surname: entity.surname as string,
+            email: entity.email as string,
+            password: entity.password as string,
+            role: entity.role as string,
+            createdAt: entity.createdAt as string,
+            expireDate: entity.expireDate as string,
+            device: device
+          }
+          createSession(userEntity)
+          createSessionBdd(userEntity)
+          return {
+            message: 'Connecté avec succès',
+            isAuth: true,
+            user: userEntity
+          }
+        } else {
+          return {
+            message: 'Email ou mot de passe incorrect',
+            isAuth: false,
+          } as any
+        
+        }
+      }
+    }
+
+    return {
+      message: 'Email ou mot de passe incorrect',
+      isAuth: false,
+    } as any
+}
+
+export async function logout(){
+    deleteSession()
+    redirect('/login')
 }

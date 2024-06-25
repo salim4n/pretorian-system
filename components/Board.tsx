@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card'
 
-export default async function Board() {
+export default function Board() {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
   const webcamRefs = useRef<Webcam[]>([])
   const [net, setNet] = useState<ObjectDetection | null>(null)

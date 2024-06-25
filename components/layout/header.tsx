@@ -1,3 +1,4 @@
+"use server"
 import {  MenuSquareIcon } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
 import { Button } from "../ui/button"
@@ -8,9 +9,9 @@ import HeaderMenuNav from "../header-menu-nav"
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Separator } from "../ui/separator"
+import LogoutButton from "../LogoutButton"
 
-
-export default async function Header() {
+export default async function Header(){
 
     return (
         <header className="sticky top-0 flex h-16 items-center justify-between gap-4 border-b bg-background mx-auto px-4 md:px-6 lg:px-8">
@@ -58,10 +59,13 @@ export default async function Header() {
                         <DropdownMenuItem>
                            <Avatar className='w-4 h-4 mr-2'>
                             <AvatarImage src="/icon.jpeg" />
-                            <AvatarFallback>PR</AvatarFallback>
+                            <AvatarFallback>
+                                PR
+                            </AvatarFallback>
                         </Avatar>
                         <Separator orientation="vertical" />
-                            <Link href="/login">Connexion</Link>
+                        <LogoutButton />
+
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

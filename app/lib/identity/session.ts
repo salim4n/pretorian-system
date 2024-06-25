@@ -3,7 +3,7 @@ import 'server-only'
 import * as dotenv from 'dotenv'
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
-import type { SessionPayload } from './definition'
+import type { SessionPayload, User } from './definition'
 import  { TableClient, AzureNamedKeyCredential } from '@azure/data-tables'
 
 dotenv.config()
@@ -46,21 +46,26 @@ export async function encrypt(payload: SessionPayload) {
     }
   }
 
-  export async function createSession(id: number) {
+  export async function createSessionBdd(user: User) {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   
     // 1. Create a session in the database
      await client.createEntity({
         partitionKey: 'Session',
-        rowKey: id.toString(),
+        rowKey: user.rowKey,
         expiresAt,
         device: window?.navigator?.userAgent,
     })
   
-    const sessionId = client.getEntity(id.toString(), 'Session')
-    
     // 2. Encrypt the session ID
-    const session = await encrypt({ userId: id, expiresAt })
+    const session = await encrypt({
+      userId : user.rowKey,
+      device : user.device,
+      role : user.role,
+      name : user.name,
+      surname : user.surname,
+      expiresAt : expiresAt,
+    })
 
     // 3. Store the session in cookies for optimistic auth checks
     cookies().set('session', session, {
