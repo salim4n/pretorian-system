@@ -9,7 +9,8 @@ import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Separator } from "../ui/separator"
 
-export default function Header() {
+
+export default async function Header() {
 
     return (
         <header className="sticky top-0 flex h-16 items-center justify-between gap-4 border-b bg-background mx-auto px-4 md:px-6 lg:px-8">

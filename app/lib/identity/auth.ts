@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv'
 import  { TableClient, AzureNamedKeyCredential } from '@azure/data-tables'
 const { v4: uuidv4 } = require('uuid')
 import bcrypt from 'bcrypt'
+import { createSession } from './session-local'
 
 dotenv.config()
 
@@ -22,20 +23,22 @@ const credential = new AzureNamedKeyCredential(
 
 const client = new TableClient(`https://${accountName}.table.core.windows.net`, "PretorianSystem", credential)
 
-export async function signup(formData: any){
+export async function signup(formData: any,device: string){
+
     const validateResult = { 
       name: formData.name,
+      surname: formData.surname,
       email: formData.email,
       password: formData.password,
     }
 
-    const { name, email, password} = validateResult
+    const { name,surname, email, password} = validateResult
 
     // 3. Check if the user's email already exists
     let entitiesIter = client.listEntities()
-    let i = 1;
+    let i = 1
     for await (const entity of entitiesIter) {
-      console.log(`Entity${i}: PartitionKey: ${entity?.partitionKey} RowKey: ${entity?.rowKey}`);
+      console.log(`Entity${i}: PartitionKey: ${entity?.partitionKey} RowKey: ${entity?.rowKey}`)
       i++
       if (entity.email === email){
         return {
@@ -51,19 +54,23 @@ export async function signup(formData: any){
       partitionKey: "User",
       rowKey: uuidv4(),
       name,
+      surname,
       email,
       password: hashedPassword,
+      role: 'customer',
+      createdAt: new Date().toISOString(),
+      expireDate: "TODO : Paid subscription date",
+      device: device
     }
 
     // 4. Insert the user into the database
      await client.createEntity(user)
-      .then((response) => {
-        console.log(response)
+      .then(() => {
+        createSession(user)
         return {
           message: 'Utilisateur créé avec succès',
           user: user
         }
       })
-
 
 }

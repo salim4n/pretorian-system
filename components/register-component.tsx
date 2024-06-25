@@ -50,7 +50,7 @@ export default function RegisterComponent() {
 
     async function onSubmit(values: z.infer<typeof signupFormSchema>) {
         setLoading(true)
-        const result = await signup(values as FormData)
+        const result = await signup(values as FormData,window.navigator.userAgent)
 
         if (result?.errors) {
             form.setError("email", {

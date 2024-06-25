@@ -3,7 +3,7 @@ import 'server-only'
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { SessionPayload } from './definition'
+import { SessionPayload, User } from './definition'
 
 const secretKey = process.env.AUTH_SECRET
 if (!secretKey) throw Error('AUTH_SECRET not found')
@@ -28,19 +28,27 @@ export async function decrypt(session: string | undefined = '') {
   }
 }
 
-export async function createSession(userId: string) {
-  const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
-  const session = await encrypt({ userId, expiresAt })
+export async function createSession(user: User) {
+  const session = await encrypt(
+    {
+      userId: user.rowKey,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      device: user.device,
+      role: user.role,
+      name: user.name,
+      surname: user.surname,
+    }
+  )
 
-  cookies().set('session', session, {
+  cookies().set('pretorian-session', session, {
     httpOnly: true,
     secure: true,
-    expires: expiresAt,
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     sameSite: 'lax',
     path: '/',
   })
 
-  redirect('/dashboard')
+  redirect('/board')
 }
 
 export async function verifySession() {
@@ -51,7 +59,14 @@ export async function verifySession() {
     redirect('/login')
   }
 
-  return { isAuth: true, userId: Number(session.userId) }
+  return { 
+    isAuth: true,
+    userId: Number(session.userId),
+    expiresAt: session.expiresAt,
+    device: session.device,
+    role : session.role,
+    name: session.name
+  }
 }
 
 export async function updateSession() {
@@ -63,7 +78,7 @@ export async function updateSession() {
   }
 
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-  cookies().set('session', session, {
+  cookies().set('pretorian-session', session, {
     httpOnly: true,
     secure: true,
     expires: expires,
@@ -73,6 +88,6 @@ export async function updateSession() {
 }
 
 export function deleteSession() {
-  cookies().delete('session')
+  cookies().delete('pretorian-session')
   redirect('/login')
 }

@@ -39,7 +39,7 @@ export async function encrypt(payload: SessionPayload) {
       const { payload } = await jwtVerify(session, key, {
         algorithms: ['HS256'],
       });
-      return payload;
+      return payload
     } catch (error) {
       console.log('Failed to verify session');
       return null;
@@ -54,6 +54,7 @@ export async function encrypt(payload: SessionPayload) {
         partitionKey: 'Session',
         rowKey: id.toString(),
         expiresAt,
+        device: window?.navigator?.userAgent,
     })
   
     const sessionId = client.getEntity(id.toString(), 'Session')
