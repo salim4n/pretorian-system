@@ -22,7 +22,8 @@ export default function Login() {
 
     async function onSubmit(value: z.infer<typeof LoginFormSchema>){
         setLoading(true)
-        const result = await login(value, window?.navigator?.userAgent)
+        const device = window && window.navigator && window.navigator.userAgent
+        const result = await login(value, device)
         setLoading(false)
         if (result.isAuth === true){
             router.push('/board')
