@@ -1,4 +1,3 @@
-
 import Board from "@/components/Board"
 import { verifySession } from "../lib/identity/session-local"
 

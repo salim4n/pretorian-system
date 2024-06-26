@@ -16,9 +16,8 @@ interface PriceCardProps {
 
 export default function PriceCard({title, price, features,description,buttonText,url}: PriceCardProps){
 
-
     return(
-<Card className="flex flex-col justify-between h-full transition transform hover:scale-105 hover:shadow-lg">
+      <Card className="flex flex-col justify-between h-full transition transform hover:scale-105 hover:shadow-lg">
         <CardTitle className="text-2xl font-bold text-center m-2">
           {title}
         </CardTitle>

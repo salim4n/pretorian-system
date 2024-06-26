@@ -4,6 +4,9 @@ import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { SessionPayload, User } from './definition'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 const secretKey = process.env.AUTH_SECRET
 if (!secretKey) throw Error('AUTH_SECRET not found')
