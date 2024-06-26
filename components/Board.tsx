@@ -12,8 +12,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card'
+import { UserView } from '@/app/lib/identity/definition'
 
-export default function Board() {
+interface BoardProps {
+  user : UserView
+}
+
+export default function Board({ user}) {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
   const webcamRefs = useRef<Webcam[]>([])
   const [net, setNet] = useState<ObjectDetection | null>(null)
@@ -36,7 +41,7 @@ export default function Board() {
               detected: o,
               picture: webcam.getScreenshot({ width: 640, height: 480 })
             }
-            await sendPicture(body as Detected)
+            await sendPicture(body as Detected,user)
           }
         })
       }

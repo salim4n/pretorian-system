@@ -108,10 +108,13 @@ export async function login(formData: any,device: string){
             role: entity.role as string,
             createdAt: entity.createdAt as string,
             expireDate: entity.expireDate as string,
-            device: device
+            device: device,
+            chatid: entity.chatid as string,
+            container: entity.container as string
           }
           createSession(userEntity)
           createSessionBdd(userEntity)
+
           return {
             message: 'Connecté avec succès',
             isAuth: true,

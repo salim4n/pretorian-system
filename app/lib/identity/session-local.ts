@@ -40,6 +40,8 @@ export async function createSession(user: User) {
       role: user.role,
       name: user.name,
       surname: user.surname,
+      chatid: user.chatid && user.chatid,
+      container: user.container && user.container,
     }
   )
 
@@ -68,12 +70,15 @@ export async function verifySession() {
     expiresAt: session.expiresAt,
     device: session.device,
     role : session.role,
-    name: session.name
+    name: session.name,
+    surname: session.surname,
+    chatid: session.chatid,
+    container: session.container,
   }
 }
 
 export async function updateSession() {
-  const session = cookies().get('session')?.value
+  const session = cookies().get('pretorian-session')?.value
   const payload = await decrypt(session)
 
   if (!session || !payload) {

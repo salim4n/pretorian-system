@@ -40,6 +40,8 @@ export type SessionPayload = {
   name: string
   surname: string
   expiresAt: Date
+  chatid: string
+  container: string
 }
 
 export type User = {
@@ -50,7 +52,50 @@ export type User = {
   email: string
   password: string
   role: string
-  createdAt: string
-  expireDate: string
+  createdAt?: string
+  expireDate?: string
+  device?: string
+  chatid?: string
+  container?: string
+}
+
+export type DetectedObject = {
+  bbox: [number, number, number, number]
+  class: string
+  score: number
+}
+
+export type Detected = {
+  detected: DetectedObject
+  picture?: string
+}
+
+export type Session = {
+  isAuth: boolean
+  userId: number
+  expiresAt: Date
   device: string
+  role: string
+  name: string
+  surname: string
+  chatid: string
+  container: string
+}
+
+export type Picture = {
+  url: string
+  class: string
+  score: number
+}
+
+export type PictureList = {
+  pictures: Picture[]
+}
+
+export type UserView = {
+  id: string | number
+  name: string
+  surname: string
+  chatid: string
+  container: string
 }

@@ -1,17 +1,18 @@
-"use server"
-import {  MenuSquareIcon } from "lucide-react"
+
+import {  Link, MenuSquareIcon } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
 import { Button } from "../ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { ModeToggle } from "../mode-toggle"
 import Image from "next/image"
 import HeaderMenuNav from "../header-menu-nav"
-import Link from 'next/link'
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { Separator } from "../ui/separator"
 import LogoutButton from "../LogoutButton"
+import { cookies } from "next/headers"
+import LoginButton from "../LoginButton"
 
 export default async function Header(){
+
+    const isAuth = cookies().get('pretorian-session') === undefined ? false : true
 
     return (
         <header className="sticky top-0 flex h-16 items-center justify-between gap-4 border-b bg-background mx-auto px-4 md:px-6 lg:px-8">
@@ -57,15 +58,7 @@ export default async function Header(){
                         <DropdownMenuItem>Support</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                           <Avatar className='w-4 h-4 mr-2'>
-                            <AvatarImage src="/icon.jpeg" />
-                            <AvatarFallback>
-                                PR
-                            </AvatarFallback>
-                        </Avatar>
-                        <Separator orientation="vertical" />
-                        <LogoutButton />
-
+                            {isAuth ? <LogoutButton /> : <LoginButton />}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

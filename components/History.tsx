@@ -20,8 +20,14 @@ import { BotIcon, CalendarIcon, LucideTrash2, PictureInPicture2Icon } from 'luci
 import { Calendar } from './ui/calendar'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
 import Image from 'next/image'
+import { UserView } from '@/app/lib/identity/definition'
 
-export default function History(){
+interface IProps {
+    user : UserView
+
+}
+
+export default function History({user}:IProps){
     const [loading, setLoading] = useState<boolean>(false)
     const { toast } = useToast()
     const actualDate = new Date()
@@ -37,8 +43,6 @@ export default function History(){
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [isDownloading, setIsDownloading] = useState<boolean>(false)
     const [modelLoading, setModelLoading] = useState<boolean>(false)
-    const [detectionDone, setDetectionDone] = useState(false)
-    const [imageUrl, setImageUrl] = useState(null)
 
     const loadModel = async () => {
         setLoading(true)
@@ -65,7 +69,7 @@ export default function History(){
         if (date && date.from && date.to) {
             const fromDateStr = date.from.toISOString()
             const toDateStr = date.to.toISOString()
-            const pictures = await getPictures(fromDateStr, toDateStr)
+            const pictures = await getPictures(fromDateStr, toDateStr,user.container)
             setPictures(pictures)
         }
     }
@@ -122,7 +126,7 @@ export default function History(){
     async function handleDeleteAllSelection(){
         setLoading(true)
         setIsDeleting(true)
-        await deletePictures(date.from, date.to)
+        await deletePictures(date.from, date.to,user.container)
             .then((_res) => {
                 setPictures([])
                 toast({
