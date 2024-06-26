@@ -60,3 +60,5 @@ jobs:
           slot-name: "Production"
           publish-profile: ${{ secrets.PUBLISH_PROFILE }}
           package: .
+        env:
+            AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
