@@ -59,12 +59,14 @@ export async function encrypt(payload: SessionPayload) {
   
     // 2. Encrypt the session ID
     const session = await encrypt({
-      userId : user.rowKey,
-      device : user.device,
-      role : user.role,
-      name : user.name,
-      surname : user.surname,
-      expiresAt : expiresAt,
+      userId: user.rowKey,
+      device: user.device,
+      role: user.role,
+      name: user.name,
+      surname: user.surname,
+      expiresAt: expiresAt,
+      chatid: user.chatid,
+      container: user.container
     })
 
     // 3. Store the session in cookies for optimistic auth checks
