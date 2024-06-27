@@ -34,7 +34,7 @@ export type FormState =
   | undefined;
 
 export type SessionPayload = {
-  userId: string | number
+  userId: string
   device: string
   role: string
   name: string
@@ -72,7 +72,7 @@ export type Detected = {
 
 export type Session = {
   isAuth: boolean
-  userId: number
+  userId: string
   expiresAt: Date
   device: string
   role: string
@@ -93,7 +93,7 @@ export type PictureList = {
 }
 
 export type UserView = {
-  id: string | number
+  id: string 
   name: string
   surname: string
   chatid: string

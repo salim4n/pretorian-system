@@ -3,8 +3,8 @@
 import * as dotenv from 'dotenv'
 import { BlobSASPermissions, generateBlobSASQueryParameters, BlobServiceClient, StorageSharedKeyCredential, BlobSASSignatureValues } from '@azure/storage-blob'
 import { DetectedObject } from "@tensorflow-models/coco-ssd"
-import fetch from 'node-fetch'
 import { UserView } from '../identity/definition'
+import { sendDetection} from '../telegram-bot/action'
 
 const { v4: uuidv4 } = require('uuid')
 
@@ -13,12 +13,10 @@ dotenv.config()
 const accountName = process.env.AUTH_AZURE_ACCOUNT as string
 const accountKey = process.env.AUTH_AZURE_ACCESS_KEY as string
 const connectionString = process.env.AUTH_AZURE_STORAGE_CONNECTION_STRING as string
-const token = process.env.TELEGRAM_BOT_TOKEN as string
 
 if (!accountName) throw Error('Azure Storage accountName not found')
 if (!accountKey) throw Error('Azure Storage accountKey not found')
 if (!connectionString) throw Error('Azure Storage connectionString not found')
-if (!token) throw Error('Telegram Bot token not found')
 
 const sharedKeyCredential = new StorageSharedKeyCredential(
     accountName,
@@ -71,7 +69,7 @@ export async function sendPicture(body: Detected,user:UserView){
         await blockBlobClient.setMetadata({class : body.detected.class})
         const imageUrl = await generateSasToken(user.container, blobName)
         const message = `Detection : ${body.detected.class}, Confidence: ${body.detected.score.toPrecision(2)} % \n Image: ${imageUrl}`
-        await sendTelegramMessage(token, user.chatid, message)
+        await sendDetection( user.chatid, message)
     }catch(e){
         console.error(e)
     }
@@ -124,20 +122,6 @@ export async function deletePictures(dateFrom: string | number | Date, dateTo: s
     return filteredBlobs.length
 }
 
-const sendTelegramMessage = async (token: string, chatId: string, message: string) => {
-    const url = `https://api.telegram.org/bot${token}/sendMessage`
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            chat_id: chatId,
-            text: message,
-        }),
-    })
-    return response.json()
-}
 
 export const generateSasToken = async (containerName: string, blobName: string): Promise<string> => {
     const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey)

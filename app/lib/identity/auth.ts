@@ -2,6 +2,7 @@
 
 import * as dotenv from 'dotenv'
 import  { TableClient, AzureNamedKeyCredential } from '@azure/data-tables'
+import {  BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 const { v4: uuidv4 } = require('uuid')
 import bcrypt from 'bcrypt'
 import { createSession, deleteSession } from './session-local'
@@ -21,6 +22,16 @@ if (!accountKey) throw Error('Azure Storage accountKey not found')
 const credential = new AzureNamedKeyCredential(
     accountName,
     accountKey
+)
+
+const sharedKeyCredential = new StorageSharedKeyCredential(
+  accountName,
+  accountKey
+)
+
+const blobServiceClient = new BlobServiceClient(
+  `https://${accountName}.blob.core.windows.net`,
+  sharedKeyCredential
 )
 
 const client = new TableClient(`https://${accountName}.table.core.windows.net`, "PretorianSystem", credential)
@@ -49,6 +60,12 @@ export async function signup(formData: any,device: string){
       }
     }
 
+    // create a container for the user
+    const containerName = uuidv4()
+
+    const containerClient = blobServiceClient.getContainerClient(containerName)
+    await containerClient.create()
+
     // Hash the user's password
     const hashedPassword = await bcrypt.hash(password, 10)
     // create user
@@ -62,7 +79,8 @@ export async function signup(formData: any,device: string){
       role: 'customer',
       createdAt: new Date().toISOString(),
       expireDate: "TODO : Paid subscription date",
-      device: device
+      device: device,
+      container : containerName
     }
 
     // 4. Insert the user into the database

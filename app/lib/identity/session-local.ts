@@ -66,7 +66,7 @@ export async function verifySession() {
 
   return { 
     isAuth: true,
-    userId: Number(session.userId),
+    userId: session.userId,
     expiresAt: session.expiresAt,
     device: session.device,
     role : session.role,
@@ -98,4 +98,15 @@ export async function updateSession() {
 export function deleteSession() {
   cookies().delete('pretorian-session')
   redirect('/login')
+}
+
+export function addChatIdToSession(){
+  const cookie = cookies().get('pretorian-session')?.value
+  const session = decrypt(cookie)
+
+  if (!session) {
+    redirect('/login')
+  }
+
+  return session
 }
