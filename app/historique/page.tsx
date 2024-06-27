@@ -6,7 +6,7 @@ async function PageHistory (){
     const session = await verifySession()
 
     const user : UserView = {
-        id: session?.userId,
+        id: session?.userId as string,
         name: session?.name as string,
         surname: session?.surname as string,
         chatid : session?.chatid as string,
