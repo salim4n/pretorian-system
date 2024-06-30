@@ -59,8 +59,10 @@ export async function createSession(user: User) {
 export async function verifySession() {
   const cookie = cookies().get('pretorian-session')?.value
   const session = await decrypt(cookie)
+  console.log('session', session) // Debug
 
   if (!session?.userId) {
+    console.log('No userId in session')
     redirect('/login')
   }
 

@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { Button } from "./ui/button"
 import { getChatId } from "@/app/lib/telegram-bot/action"
 import { addChatIdToUser } from "@/app/lib/azure-table/action"
+import { logout } from "@/app/lib/identity/auth"
+import { useRouter } from "next/navigation"
 
 interface ParamTelegramProps {
     user: UserView
@@ -16,6 +18,8 @@ export default function ParamTelegram({ user }: ParamTelegramProps) {
     const [uuid, setUuid] = useState('')
     const [status, setStatus] = useState('')
     const [chatId, setChatId] = useState('')
+
+    const router = useRouter()
   
     const handleGenerateUuid = () => {
       const newUuid = uuidv4()
@@ -32,6 +36,7 @@ export default function ParamTelegram({ user }: ParamTelegramProps) {
                 setStatus('UUID vérifié avec succès ! Nous allons vous deconnecter pour appliquer les changements.')
                 setTimeout(async() => {
                 await addChatIdToUser(user.id, chatId)
+                  .then(async () => await logout())
                 }, 3000)
             } else {
                 setStatus('UUID non trouvé. Assurez-vous d\'avoir envoyé l\'UUID au bot Telegram.')
@@ -43,7 +48,7 @@ export default function ParamTelegram({ user }: ParamTelegramProps) {
         }
       }
 
-      return (
+      return  !user.chatid ?(
         <div className="min-h-screen flex flex-col items-center justify-center ">
           <div className=" p-8 rounded shadow-md w-full max-w-lg bg-primary text-white">
             <h1 className="text-2xl font-bold mb-4">Obtenir votre chatId Telegram</h1>
@@ -93,6 +98,22 @@ export default function ParamTelegram({ user }: ParamTelegramProps) {
     
             {status && <p className="mt-4 text-red-500">{status}</p>}
             {chatId && <p className="mt-4 text-green-500"><strong>Votre chatId :</strong> {chatId}</p>}
+          </div>
+        </div>
+      ) : (
+        <div className="min-h-screen flex flex-col items-center justify-center ">
+          <div className=" p-8 rounded shadow-md w-full max-w-lg bg-primary text-white">
+            <h1 className="text-2xl font-bold mb-4">ChatId Telegram</h1>
+            <p className="mb-4">
+              Votre chatId Telegram est déjà enregistré. Vous pouvez continuer à utiliser l'application.
+            </p>
+            <Button 
+              onClick={() => router.push('/board')} 
+              variant="secondary"
+              className="py-2 px-4 rounded"
+            >
+              Commencer
+            </Button>
           </div>
         </div>
       )

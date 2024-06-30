@@ -32,10 +32,20 @@ export const addChatIdToUser = async (rowKey: string, chatid:string ) => {
     await client.updateEntity(entity)
         .catch((error) => (console.log(error)))
         .then(() => console.log('ChatId added to user'))
-
 }
 
 export const getUser = async (rowKey: string) => {
     const user = await client.getEntity<User>("User", rowKey)
     return user
+}
+
+export const getUsers = async () => {
+    const users =  client.listEntities({ queryOptions: { filter: `PartitionKey eq 'User'` } })
+    return users
+}
+
+export const deleteUser = async (rowKey: string) => {
+    await client.deleteEntity("User", rowKey)
+        .catch((error) => (console.log(error)))
+        .then(() => console.log('User deleted', rowKey))
 }
