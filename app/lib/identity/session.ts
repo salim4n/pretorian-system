@@ -54,7 +54,7 @@ export async function encrypt(payload: SessionPayload) {
         partitionKey: 'Session',
         rowKey: user.rowKey,
         expiresAt,
-        device: window?.navigator?.userAgent,
+        device: user.device,
     })
   
     // 2. Encrypt the session ID
