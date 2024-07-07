@@ -6,7 +6,6 @@ import { FAQ } from "../models/faq"
 import { Card, CardContent, CardDescription, CardTitle } from "./ui/card"
 
 export default function FaqCollapsible({ faq }: { faq: FAQ[] }) {
-    console.log(faq)
   return (
     <div>
         <Card className="bg-transparent border-none">
