@@ -75,6 +75,7 @@ export async function sendPicture(body: Detected,user:UserView){
     }
 }
 
+
 export async function downloadPictures(dateFrom: string | number | Date, dateTo: string | number | Date,container:string){
     const containerClient = blobServiceClient.getContainerClient(container)
     const blobs = containerClient.listBlobsFlat()

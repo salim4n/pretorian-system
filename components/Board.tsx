@@ -12,11 +12,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card'
-import { UserView } from '@/app/lib/identity/definition'
-
-interface BoardProps {
-  user : UserView
-}
 
 export default function Board({ user}) {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
