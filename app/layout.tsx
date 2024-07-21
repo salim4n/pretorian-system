@@ -14,7 +14,8 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: "Pretorian - Security Solutions",
-  description: "Pretorian System is a security solutions company that provides Computer Vision to businesses and individuals.",
+  description:
+    "Pretorian System is a security solutions company that provides Computer Vision to businesses and individuals.",
 }
 
 export default function RootLayout({
@@ -24,26 +25,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="FR-fr">
-           <body
+      <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
-        )}
-      >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-              <Header />
-              <main>
-                  {children}
-                  <Toaster />
-              </main>
-              <Footer />
-            </ThemeProvider>
-        </body>
+        )}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange>
+          <Header />
+          <main>
+            {children}
+            <Toaster />
+          </main>
+          <Footer />
+        </ThemeProvider>
+      </body>
     </html>
-  );
+  )
 }
